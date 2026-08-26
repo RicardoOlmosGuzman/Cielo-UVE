@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha visual: la desconexión con el cielo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noche:#05070F;
+    --cielo-medio:#0D1424;
+    --cielo-lavado:#212A3C;
+    --tinta:#E8EAF0;
+    --tinta-baja:#9BA5BC;
+    --sodio:#E2A03F;        /* lámpara de sodio, la luz vieja */
+    --led:#8FD4E8;          /* LED blanco-azul, la luz nueva */
+    --rojo-obs:#D9553F;     /* luz roja de observatorio, no arruina la visión nocturna */
+    --verde-dato:#7FBF8F;
+    --linea:rgba(155,165,188,.22);
+    --radio:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--noche);
+    color:var(--tinta);
+    font-family:"Newsreader",Georgia,serif;
+    font-size:18px;
+    line-height:1.62;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* el fondo se aclara a medida que bajas: el cielo se va borrando */
+  .lienzo{
+    background:linear-gradient(180deg,var(--noche) 0%,var(--noche) 22%,var(--cielo-medio) 55%,var(--cielo-lavado) 88%,#2C3548 100%);
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:0 22px 90px}
+
+  h1,h2,h3,.eyebrow,.badge,.mono,.paso-num,.tag{font-family:"Space Grotesk",-apple-system,"Segoe UI",sans-serif}
+  .eyebrow{
+    font-size:11.5px;letter-spacing:.20em;text-transform:uppercase;
+    font-weight:500;color:var(--tinta-baja);
+  }
+
+  /* ---------- portada ---------- */
+  header{padding:70px 0 30px}
+  .kicker{color:var(--sodio);font-weight:500}
+  h1{
+    font-size:clamp(34px,6.6vw,58px);
+    line-height:1.03;letter-spacing:-.025em;font-weight:700;
+    margin:18px 0 0;
+  }
+  h1 em{font-style:normal;color:var(--sodio)}
+  .bajada{
+    font-size:clamp(19px,2.4vw,23px);color:var(--tinta-baja);
+    max-width:60ch;margin:22px 0 0;font-weight:300;
+  }
+  .meta{
+    margin-top:34px;padding-top:16px;border-top:1px solid var(--linea);
+    display:flex;flex-wrap:wrap;gap:10px 26px;
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--tinta-baja);
+  }
+
+  /* ---------- firma: escala de desaparición ---------- */
+  .escala{margin:52px 0 10px}
+  .escala-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .panel{border:1px solid var(--linea);border-radius:8px;overflow:hidden}
+  .panel svg{display:block;width:100%;height:auto}
+  .panel figcaption{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+    padding:8px 9px 10px;color:var(--tinta-baja);line-height:1.35;
+    background:rgba(0,0,0,.28);
+  }
+  .panel figcaption b{color:var(--tinta);font-weight:600;display:block;font-size:11.5px}
+  .pie-escala{font-size:15px;color:var(--tinta-baja);margin-top:14px;max-width:66ch}
+
+  /* ---------- secciones ---------- */
+  section{margin-top:64px}
+  h2{
+    font-size:clamp(24px,3.4vw,32px);line-height:1.15;letter-spacing:-.02em;
+    font-weight:700;margin:10px 0 6px;
+  }
+  h3{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
+  p{margin:14px 0}
+  .lead{font-size:20px;color:var(--tinta)}
+
+  /* ---------- guion en tiempos ---------- */
+  .guion{margin-top:26px;border-left:2px solid var(--linea);padding-left:0}
+  .tiempo{display:grid;grid-template-columns:64px 1fr;gap:0 20px;padding:18px 0 18px 22px;border-bottom:1px solid var(--linea);position:relative}
+  .tiempo:last-child{border-bottom:0}
+  .tiempo::before{
+    content:"";position:absolute;left:-5px;top:26px;width:8px;height:8px;
+    border-radius:50%;background:var(--sodio);
+  }
+  .paso-num{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--sodio);
+    padding-top:5px;letter-spacing:.06em;
+  }
+  .tiempo p{margin:6px 0 0;font-size:17px;color:var(--tinta-baja)}
+  .tiempo h3{color:var(--tinta)}
+
+  /* ---------- cadena de desconexión ---------- */
+  .cadena{display:grid;gap:0;margin-top:28px}
+  .eslabon{
+    border:1px solid var(--linea);border-radius:var(--radio);
+    padding:20px 22px;background:rgba(255,255,255,.028);
+  }
+  .eslabon + .flecha{
+    text-align:center;color:var(--sodio);font-size:22px;line-height:1;
+    padding:9px 0;font-family:"Space Grotesk",sans-serif;
+  }
+  .eslabon .tag{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--sodio);
+  }
+  .eslabon p{margin:8px 0 0;font-size:16.5px;color:var(--tinta-baja)}
+
+  .clave{
+    margin-top:30px;border-radius:var(--radio);
+    border:1px solid rgba(226,160,63,.42);
+    background:linear-gradient(180deg,rgba(226,160,63,.13),rgba(226,160,63,.05));
+    padding:26px 26px 24px;
+  }
+  .clave .eyebrow{color:var(--sodio)}
+  .clave p{font-size:21px;line-height:1.45;color:var(--tinta);margin:12px 0 0}
+  .clave p strong{color:var(--sodio);font-weight:400}
+
+  /* ---------- capas ---------- */
+  .capas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+  .capa{border-radius:var(--radio);padding:20px;border:1px solid var(--linea);background:rgba(255,255,255,.028)}
+  .capa .eyebrow{font-size:10.5px}
+  .capa p{font-size:15.5px;color:var(--tinta-baja);margin:8px 0 0}
+  .c-fis{border-top:3px solid var(--led)}
+  .c-fis .eyebrow{color:var(--led)}
+  .c-per{border-top:3px solid var(--sodio)}
+  .c-per .eyebrow{color:var(--sodio)}
+  .c-cul{border-top:3px solid var(--rojo-obs)}
+  .c-cul .eyebrow{color:var(--rojo-obs)}
+
+  /* ---------- datos ---------- */
+  .datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:24px}
+  .dato{
+    border:1px solid var(--linea);border-radius:10px;padding:16px 16px 14px;
+    background:rgba(143,212,232,.05);
+  }
+  .cifra{font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:600;color:var(--led);letter-spacing:-.02em;line-height:1.1}
+  .dato small{display:block;margin-top:7px;font-size:13px;color:var(--tinta-baja);line-height:1.4;font-family:"Space Grotesk",sans-serif}
+
+  /* ---------- correcciones ---------- */
+  .fix{
+    margin-top:26px;border:1px solid rgba(217,85,63,.4);border-radius:var(--radio);
+    background:rgba(217,85,63,.07);overflow:hidden;
+  }
+  .fix-h{padding:16px 22px;border-bottom:1px solid rgba(217,85,63,.3)}
+  .fix-h .eyebrow{color:var(--rojo-obs)}
+  .fila{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid rgba(217,85,63,.18)}
+  .fila:last-child{border-bottom:0}
+  .celda{padding:15px 22px;font-size:15.5px;line-height:1.5}
+  .celda.antes{color:var(--tinta-baja);border-right:1px solid rgba(217,85,63,.18)}
+  .celda.antes span{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--rojo-obs);margin-bottom:5px}
+  .celda.despues span{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--verde-dato);margin-bottom:5px}
+
+  /* ---------- caja neutra ---------- */
+  .caja{border:1px solid var(--linea);border-radius:var(--radio);padding:24px;margin-top:24px;background:rgba(255,255,255,.03)}
+  .caja h3{color:var(--tinta)}
+  .caja ul{margin:12px 0 0;padding-left:20px;color:var(--tinta-baja);font-size:16.5px}
+  .caja li{margin:8px 0}
+  .caja li b{color:var(--tinta);font-weight:600;font-family:"Space Grotesk",sans-serif;font-size:15.5px}
+
+  .kessler{margin-top:24px;border:1px solid var(--linea);border-radius:var(--radio);padding:18px;background:rgba(143,212,232,.045)}
+  .kessler svg{display:block;width:100%;height:auto;max-width:560px;margin:0 auto}
+
+  /* ---------- cierre ---------- */
+  .cierre{
+    margin-top:64px;padding:34px 30px;border-radius:var(--radio);
+    background:rgba(5,7,15,.55);border:1px solid var(--linea);
+  }
+  .cierre p{font-size:20px;line-height:1.5;margin:0}
+  .cierre p + p{margin-top:16px}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--linea);font-size:14px;color:var(--tinta-baja)}
+  footer .ref{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.75;margin-top:10px}
+
+  @media (max-width:680px){
+    body{font-size:17px}
+    .capas{grid-template-columns:1fr}
+    .escala-grid{grid-template-columns:repeat(2,1fr)}
+    .fila{grid-template-columns:1fr}
+    .celda.antes{border-right:0;border-bottom:1px solid rgba(217,85,63,.18)}
+    .tiempo{grid-template-columns:1fr;gap:0}
+    .paso-num{padding-top:0}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .tiempo,.eslabon,.dato{animation:sube .5s ease both}
+    @keyframes sube{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+<div class="lienzo">
+<div class="wrap">
+
+<header>
+  <div class="eyebrow kicker">Ficha visual · relato reconstruido</div>
+  <h1>Primero dejamos de necesitar el cielo.<br><em>Después dejamos de verlo.</em></h1>
+  <p class="bajada">Basura orbital, contaminación lumínica y una pérdida que casi nadie reclama, porque ya nadie usaba lo que se estaba perdiendo.</p>
+  <div class="meta">
+    <span>Ricardo Olmos</span>
+    <span>Didáctica de la Física y Práctica Profesional II</span>
+    <span>Unidad 4 "El Universo" · 2° medio</span>
+  </div>
+</header>
+
+<!-- FIRMA VISUAL -->
+<section class="escala" aria-label="Escala de desaparición de Orión">
+  <div class="eyebrow">La misma constelación, cuatro cielos</div>
+  <div class="escala-grid">
+
+    <figure class="panel">
+      <svg viewBox="0 0 100 125" role="img" aria-label="Orión en cielo oscuro">
+        <rect width="100" height="125" fill="#05070F"/>
+        <g fill="#E8EAF0" opacity=".55">
+          <circle cx="10" cy="15" r=".8"/><circle cx="88" cy="12" r=".7"/><circle cx="18" cy="45" r=".9"/>
+          <circle cx="64" cy="38" r=".7"/><circle cx="92" cy="55" r=".8"/><circle cx="6" cy="72" r=".7"/>
+          <circle cx="80" cy="70" r=".9"/><circle cx="30" cy="88" r=".7"/><circle cx="70" cy="110" r=".8"/>
+          <circle cx="15" cy="105" r=".7"/><circle cx="55" cy="25" r=".6"/><circle cx="40" cy="42" r=".7"/>
+          <circle cx="85" cy="88" r=".6"/><circle cx="22" cy="62" r=".8"/><circle cx="50" cy="95" r=".6"/>
+          <circle cx="95" cy="30" r=".7"/><circle cx="12" cy="35" r=".6"/><circle cx="68" cy="82" r=".7"/>
+          <circle cx="38" cy="15" r=".6"/><circle cx="58" cy="112" r=".7"/>
+        </g>
+        <g fill="#F2F4FA" opacity=".85">
+          <circle cx="44" cy="75" r="1.1"/><circle cx="46" cy="82" r="1"/><circle cx="43" cy="88" r=".9"/>
+          <circle cx="50" cy="8" r="1.2"/>
+        </g>
+        <g fill="#FFFFFF">
+          <circle cx="25" cy="22" r="3.1" fill="#E2A03F"/>
+          <circle cx="72" cy="26" r="2.1"/>
+          <circle cx="35" cy="62" r="1.9"/><circle cx="48" cy="60" r="2"/><circle cx="61" cy="58" r="1.9"/>
+          <circle cx="32" cy="100" r="2"/>
+          <circle cx="78" cy="96" r="2.9" fill="#CFE0FF"/>
+        </g>
+      </svg>
+      <figcaption><b>Cielo oscuro</b>Cordillera, desierto. Se ven miles de estrellas y la Vía Láctea.</figcaption>
+    </figure>
+
+    <figure class="panel">
+      <svg viewBox="0 0 100 125" role="img" aria-label="Orión en cielo rural">
+        <rect width="100" height="125" fill="#0C1220"/>
+        <g fill="#E8EAF0" opacity=".22">
+          <circle cx="18" cy="45" r=".8"/><circle cx="64" cy="38" r=".6"/><circle cx="80" cy="70" r=".8"/>
+          <circle cx="15" cy="105" r=".6"/><circle cx="40" cy="42" r=".6"/><circle cx="22" cy="62" r=".7"/>
+          <circle cx="95" cy="30" r=".6"/><circle cx="68" cy="82" r=".6"/>
+        </g>
+        <g fill="#F2F4FA" opacity=".45">
+          <circle cx="44" cy="75" r=".9"/><circle cx="46" cy="82" r=".8"/><circle cx="50" cy="8" r=".9"/>
+        </g>
+        <g fill="#FFFFFF" opacity=".92">
+          <circle cx="25" cy="22" r="2.9" fill="#E2A03F"/>
+          <circle cx="72" cy="26" r="1.9"/>
+          <circle cx="35" cy="62" r="1.7"/><circle cx="48" cy="60" r="1.8"/><circle cx="61" cy="58" r="1.7"/>
+          <circle cx="32" cy="100" r="1.8"/>
+          <circle cx="78" cy="96" r="2.7" fill="#CFE0FF"/>
+        </g>
+      </svg>
+      <figcaption><b>Cielo rural</b>Se pierde la Vía Láctea. Orión completo todavía se lee.</figcaption>
+    </figure>
+
+    <figure class="panel">
+      <svg viewBox="0 0 100 125" role="img" aria-label="Orión en cielo suburbano">
+        <rect width="100" height="125" fill="#1A2233"/>
+        <rect y="80" width="100" height="45" fill="#E2A03F" opacity=".07"/>
+        <g fill="#FFFFFF">
+          <circle cx="25" cy="22" r="2.4" fill="#E2A03F" opacity=".8"/>
+          <circle cx="72" cy="26" r="1.4" opacity=".5"/>
+          <circle cx="35" cy="62" r="1.2" opacity=".42"/><circle cx="48" cy="60" r="1.3" opacity=".45"/><circle cx="61" cy="58" r="1.2" opacity=".42"/>
+          <circle cx="32" cy="100" r="1.3" opacity=".4"/>
+          <circle cx="78" cy="96" r="2.3" fill="#CFE0FF" opacity=".78"/>
+        </g>
+      </svg>
+      <figcaption><b>Cielo suburbano</b>Quedan siete estrellas. El cinturón cuesta distinguirlo.</figcaption>
+    </figure>
+
+    <figure class="panel">
+      <svg viewBox="0 0 100 125" role="img" aria-label="Orión en cielo urbano">
+        <rect width="100" height="125" fill="#2E3646"/>
+        <rect y="60" width="100" height="65" fill="#E2A03F" opacity=".12"/>
+        <g fill="#FFFFFF">
+          <circle cx="25" cy="22" r="1.9" fill="#E2A03F" opacity=".55"/>
+          <circle cx="78" cy="96" r="1.8" fill="#CFE0FF" opacity=".5"/>
+          <circle cx="48" cy="60" r=".8" opacity=".1"/>
+        </g>
+        <g stroke="#8FD4E8" stroke-width=".55" opacity=".75">
+          <line x1="4" y1="34" x2="19" y2="30"/>
+          <line x1="60" y1="16" x2="76" y2="11"/>
+          <line x1="30" y1="112" x2="47" y2="107"/>
+        </g>
+      </svg>
+      <figcaption><b>Cielo urbano</b>Dos estrellas y tres satélites. Lo que se mueve se ve mejor que lo que está.</figcaption>
+    </figure>
+
+  </div>
+  <p class="pie-escala">Ese último cuadro es el que ve la mayoría de la población de Chile todas las noches. No es una metáfora del problema, es el problema.</p>
+</section>
+
+<!-- GUION CORREGIDO -->
+<section>
+  <div class="eyebrow">01 · El relato, en siete tiempos</div>
+  <h2>Cómo debería contarse</h2>
+  <p class="lead">La versión original parte por la basura y llega al cielo simbólico como remate. Conviene invertirlo: la basura y la luz son la evidencia, la desconexión es la tesis.</p>
+
+  <div class="guion">
+    <div class="tiempo">
+      <div class="paso-num">T1</div>
+      <div>
+        <h3>Abrir con la masa, no con la anécdota</h3>
+        <p>Hay del orden de 13.000 toneladas de objetos humanos orbitando sobre nuestras cabezas. La mayor parte ya no sirve para nada. Es el único vertedero que todos vemos y nadie visita.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T2</div>
+      <div>
+        <h3>De dónde salió</h3>
+        <p>Satélites que terminaron su vida útil, etapas de cohetes que nunca reingresaron, fragmentos de colisiones. Y un caso deliberado: en 2007 China destruyó su propio satélite Fengyun-1C con un misil y generó más de 3.000 fragmentos rastreables, el evento más contaminante de la historia orbital.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T3</div>
+      <div>
+        <h3>Por qué un tornillo es un proyectil</h3>
+        <p>Lo que destruye un satélite no es la velocidad orbital sino la velocidad relativa del choque, que en órbita baja promedia unos 10 km/s. Como la energía cinética crece con el cuadrado de la velocidad, un fragmento de 1 cm llega con unos 60.000 joule, lo mismo que un auto pequeño a 40 km/h. Esa es la frase que reemplaza la comparación con el Falcon 9.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T4</div>
+      <div>
+        <h3>El bucle</h3>
+        <p>Cada colisión no elimina basura, la multiplica. Más fragmentos significan más blancos, y más blancos significan más colisiones. Ese es el síndrome de Kessler, y es un modelo de retroalimentación positiva, no una predicción apocalíptica.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T5</div>
+      <div>
+        <h3>El giro: el problema no está a 800 km</h3>
+        <p>La basura orbital amenaza servicios (GPS, telecomunicaciones, observación de la Tierra). Pero lo que te toca todas las noches está en la vereda de tu casa. La luz mal apuntada borra el cielo mucho antes que cualquier satélite.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T6</div>
+      <div>
+        <h3>La tesis</h3>
+        <p>El cielo no se perdió porque lo taparon. Lo taparon porque ya lo habíamos dejado de usar. La desconexión vino primero y explica el silencio con el que aceptamos la pérdida.</p>
+      </div>
+    </div>
+    <div class="tiempo">
+      <div class="paso-num">T7</div>
+      <div>
+        <h3>Cerrar sin nostalgia</h3>
+        <p>No se trata de volver a sembrar por las Pléyades. Se trata de decidir que la vista del cielo es un bien que se puede perder. En Chile la herramienta legal ya existe y está vigente. Lo que falta es que a alguien le importe lo suficiente como para exigir que se aplique.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NÚCLEO: LA DESCONEXIÓN -->
+<section>
+  <div class="eyebrow">02 · El núcleo del argumento</div>
+  <h2>La cadena de la desconexión</h2>
+  <p>Cuatro pasos, en orden histórico. Cada uno se puede defender con evidencia y ninguno necesita apelar a la espiritualidad.</p>
+
+  <div class="cadena">
+    <div class="eslabon">
+      <div class="tag">Paso 1 · El cielo tenía trabajo</div>
+      <h3>Era calendario, mapa, reloj y archivo</h3>
+      <p>Cuándo sembrar, cuándo cosechar, hacia dónde navegar, cuándo celebrar, cómo transmitir una historia sin escritura. En el norte de Chile las culturas andinas y atacameñas leían salidas heliacas y constelaciones oscuras de la Vía Láctea. No era decoración, era infraestructura.</p>
+    </div>
+    <div class="flecha">↓</div>
+    <div class="eslabon">
+      <div class="tag">Paso 2 · Cada función fue reemplazada</div>
+      <h3>El cielo quedó cesante</h3>
+      <p>Calendario impreso, reloj mecánico, brújula, GPS, registro escrito. Uno por uno, todos los servicios que prestaba el cielo pasaron a un dispositivo. Nadie decidió dejar de mirarlo, simplemente dejó de hacer falta.</p>
+    </div>
+    <div class="flecha">↓</div>
+    <div class="eslabon">
+      <div class="tag">Paso 3 · Sin uso, no hay costo aparente</div>
+      <h3>Borrarlo salió gratis</h3>
+      <p>Iluminación exterior mal dirigida hacia el hemisferio superior, publicidad luminosa, y ahora megaconstelaciones de miles de satélites en órbita baja. Ninguna de esas decisiones se discutió como pérdida patrimonial, porque el bien afectado ya no figuraba en ninguna contabilidad.</p>
+    </div>
+    <div class="flecha">↓</div>
+    <div class="eslabon">
+      <div class="tag">Paso 4 · El resultado</div>
+      <h3>El cielo se volvió dato, no relación</h3>
+      <p>Abrimos una aplicación para saber qué constelación tenemos encima. Miramos la pantalla que representa el cielo, muchas veces de espaldas al cielo. La información aumentó y la experiencia desapareció.</p>
+    </div>
+  </div>
+
+  <div class="clave">
+    <div class="eyebrow">La frase que sostiene todo</div>
+    <p>No dejamos de mirar el cielo porque se borró. <strong>Se borró porque ya habíamos dejado de mirarlo.</strong> Por eso la pérdida no genera protesta: no se extraña lo que hace tres generaciones no se usa.</p>
+  </div>
+
+  <div class="caja">
+    <h3>Contraargumento honesto (incluirlo fortalece el video)</h3>
+    <p style="color:var(--tinta-baja);font-size:16.5px;margin-top:10px">Alguien puede responder, con razón, que nadie quiere volver a navegar por estrellas y que el GPS es mejor. Es cierto. Lo que se pierde no es una técnica, es una escala. El cielo nocturno es la única experiencia cotidiana y gratuita de lo muy grande y lo muy antiguo. Cuando desaparece, no perdemos un método, perdemos el único lugar donde la humanidad entera mide su tamaño.</p>
+  </div>
+</section>
+
+<!-- TRES CAPAS -->
+<section>
+  <div class="eyebrow">03 · Estructura del problema</div>
+  <h2>Tres capas que no hay que mezclar</h2>
+  <p>El error más común del relato original es saltar entre capas sin avisar. Separarlas hace el argumento mucho más difícil de refutar.</p>
+  <div class="capas">
+    <div class="capa c-fis">
+      <div class="eyebrow">Capa física</div>
+      <h3>Basura orbital</h3>
+      <p>Energía cinética, densidad de objetos, probabilidad de colisión, síndrome de Kessler. Se mide, se modela, se discute con números. Amenaza servicios, no la vista.</p>
+    </div>
+    <div class="capa c-per">
+      <div class="eyebrow">Capa perceptual</div>
+      <h3>Lo que ya no se ve</h3>
+      <p>Contaminación lumínica más trazas de satélites. Es la capa que efectivamente borra el cielo para la población. Es también la más regulable a corto plazo.</p>
+    </div>
+    <div class="capa c-cul">
+      <div class="eyebrow">Capa cultural</div>
+      <h3>La relación perdida</h3>
+      <p>El cielo como calendario, orientación y memoria. Aquí no se pierde visibilidad, se pierde vínculo. Es la capa donde vive la tesis del video.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DATOS -->
+<section>
+  <div class="eyebrow">04 · Cifras verificadas</div>
+  <h2>Los números que sí puedes decir en cámara</h2>
+  <div class="datos">
+    <div class="dato"><div class="cifra">≈13.000 t</div><small>Masa de objetos humanos en órbita terrestre (estimación ESA)</small></div>
+    <div class="dato"><div class="cifra">≈9.000</div><small>Autos promedio de 1.400 kg equivalentes a esa masa</small></div>
+    <div class="dato"><div class="cifra">≈10 km/s</div><small>Velocidad relativa media de impacto en órbita baja</small></div>
+    <div class="dato"><div class="cifra">60 kJ</div><small>Energía de un fragmento de 1 cm, igual a un auto pequeño a 40 km/h</small></div>
+    <div class="dato"><div class="cifra">+3.000</div><small>Fragmentos rastreables generados por el ensayo antisatélite de 2007</small></div>
+    <div class="dato"><div class="cifra">1972 → 2025</div><small>Cosmos 482, lanzada hacia Venus, reingresó el 10 de mayo de 2025</small></div>
+  </div>
+
+  <div class="kessler">
+    <svg viewBox="0 0 560 180" role="img" aria-label="Diagrama del bucle de Kessler">
+      <defs>
+        <marker id="pta" markerWidth="9" markerHeight="9" refX="6" refY="3.2" orient="auto">
+          <path d="M0,0 L7,3.2 L0,6.4 Z" fill="#8FD4E8"/>
+        </marker>
+      </defs>
+      <g font-family="Space Grotesk, sans-serif" font-size="13" fill="#E8EAF0" text-anchor="middle">
+        <rect x="18" y="62" width="132" height="52" rx="9" fill="rgba(143,212,232,.10)" stroke="#8FD4E8" stroke-opacity=".5"/>
+        <text x="84" y="84">Colisión</text><text x="84" y="101" fill="#9BA5BC" font-size="11">o ruptura en órbita</text>
+
+        <rect x="214" y="62" width="132" height="52" rx="9" fill="rgba(143,212,232,.10)" stroke="#8FD4E8" stroke-opacity=".5"/>
+        <text x="280" y="84">Más fragmentos</text><text x="280" y="101" fill="#9BA5BC" font-size="11">miles, no rastreables</text>
+
+        <rect x="410" y="62" width="132" height="52" rx="9" fill="rgba(143,212,232,.10)" stroke="#8FD4E8" stroke-opacity=".5"/>
+        <text x="476" y="84">Más blancos</text><text x="476" y="101" fill="#9BA5BC" font-size="11">y más probabilidad</text>
+      </g>
+      <g stroke="#8FD4E8" stroke-width="1.6" fill="none" marker-end="url(#pta)" opacity=".85">
+        <line x1="152" y1="88" x2="206" y2="88"/>
+        <line x1="348" y1="88" x2="402" y2="88"/>
+        <path d="M476,120 C476,158 84,158 84,120"/>
+      </g>
+      <text x="280" y="172" font-family="IBM Plex Mono, monospace" font-size="11" fill="#8FD4E8" text-anchor="middle" letter-spacing="1.5">RETROALIMENTACIÓN POSITIVA</text>
+    </svg>
+  </div>
+</section>
+
+<!-- CORRECCIONES -->
+<section>
+  <div class="eyebrow">05 · Control de calidad</div>
+  <h2>Lo que hay que corregir del original</h2>
+  <div class="fix">
+    <div class="fix-h"><div class="eyebrow">Cuatro afirmaciones que no resisten verificación</div></div>
+    <div class="fila">
+      <div class="celda antes"><span>Decía</span>12.900.000 kg equivalen a 2.580 autos</div>
+      <div class="celda despues"><span>Corregido</span>Esa cuenta da 5.000 kg por auto. Con autos de 1.400 kg son unos 9.000</div>
+    </div>
+    <div class="fila">
+      <div class="celda antes"><span>Decía</span>61,5 veces la catedral de Notre Dame</div>
+      <div class="celda despues"><span>Corregido</span>Implicaría una catedral de 210 toneladas. Sacar la comparación, no aporta escala</div>
+    </div>
+    <div class="fila">
+      <div class="celda antes"><span>Decía</span>Comparar los 30.000 km/h con el ascenso del Falcon 9</div>
+      <div class="celda despues"><span>Corregido</span>Lo relevante es la velocidad relativa de impacto y que la energía va con v al cuadrado</div>
+    </div>
+    <div class="fila">
+      <div class="celda antes"><span>Decía</span>El Sentinel-1 quedó en desuso por un fragmento de 5 mm</div>
+      <div class="celda despues"><span>Corregido</span>El Sentinel-1A fue dañado en 2016 en un panel solar y siguió operando. El 1B se perdió en 2021 por una falla eléctrica interna</div>
+    </div>
+    <div class="fila">
+      <div class="celda antes"><span>Decía</span>El cielo es un territorio no legislado</div>
+      <div class="celda despues"><span>Corregido</span>Existen el Tratado del Espacio Exterior (1967), las directrices IADC y COPUOS, y en Chile el DS 1/2022 MMA, vigente desde el 19 de octubre de 2024 para todo el territorio</div>
+    </div>
+  </div>
+
+  <div class="caja">
+    <h3>Y tres cosas que conviene sacar</h3>
+    <ul>
+      <li><b>El tramo de las modas espirituales.</b> Afirmación causal sin evidencia, cambia de registro y exotiza a los mismos pueblos que el video quiere defender. Se elimina completo y el argumento no pierde nada.</li>
+      <li><b>Eliade como única ancla teórica.</b> Es una fuente discutida y europea. La astronomía cultural andina y atacameña da material propio, verificable y mucho más pertinente para Antofagasta.</li>
+      <li><b>El caso Marubo sin advertencia.</b> El reportaje original fue muy distorsionado en la cobertura secundaria. Si se usa, hay que usar el hecho documentado (un cambio abrupto de conectividad y un debate interno en la comunidad) y no el encuadre moral de los "vicios".</li>
+    </ul>
+  </div>
+</section>
+
+<!-- LO QUE SÍ EXISTE -->
+<section>
+  <div class="eyebrow">06 · La pregunta que reemplaza al reclamo</div>
+  <h2>Sí hay ley. El cielo se pierde igual.</h2>
+  <p>Esto no debilita el argumento, lo mejora. Chile tiene una de las normativas lumínicas más exigentes del mundo, ampliada desde las regiones de Antofagasta, Atacama y Coquimbo a todo el país, e incorporando la biodiversidad y la salud de las personas como objetos de protección junto a la calidad astronómica de los cielos.</p>
+  <div class="caja">
+    <h3>La pregunta correcta para cerrar el video</h3>
+    <p style="color:var(--tinta-baja);font-size:17px;margin-top:10px">No es "por qué nadie regula el cielo". Es "por qué, existiendo la norma desde octubre de 2024, la mayoría de la gente ni siquiera sabe que perdió algo". Y ahí vuelve la tesis: una ley protege un bien que la sociedad reconoce como bien. La desconexión es exactamente el motivo por el que la norma se cumple poco y se exige menos.</p>
+  </div>
+</section>
+
+<!-- ANCLAJE DIDÁCTICO -->
+<section>
+  <div class="eyebrow">07 · Para tu práctica</div>
+  <h2>Dónde entra esto en el aula</h2>
+  <div class="caja">
+    <ul>
+      <li><b>Unidad y nivel.</b> Unidad 4 "El Universo", 2° medio, que incluye explícitamente los objetos tecnológicos enviados al espacio y el uso de la gravitación en el lanzamiento de satélites y sondas.</li>
+      <li><b>Actitudes y habilidades.</b> OA D (pensamiento crítico y argumentación con evidencias válidas y confiables) y OA e (investigación documental con evaluación de fuentes).</li>
+      <li><b>La actividad estrella.</b> Auditoría de cifras: el curso recalcula la equivalencia en autos y la energía de impacto usando el video como fuente real. Trabaja análisis dimensional, orden de magnitud y evaluación de fuentes en una sola tarea.</li>
+      <li><b>Conexión con modelización.</b> El síndrome de Kessler es un modelo de retroalimentación positiva. Sirve para discutir qué hace un modelo (predecir, explicar, decidir) sin necesidad de matemática avanzada.</li>
+      <li><b>Anclaje territorial.</b> ALMA, el Observatorio Vera C. Rubin y la norma lumínica convierten el tema en una cuestión sociocientífica chilena y no en un problema importado.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="cierre">
+  <p>El cielo es el único patrimonio que compartimos absolutamente todos y el único que se puede destruir sin tocarlo, simplemente encendiendo luces hacia arriba.</p>
+  <p style="color:var(--tinta-baja)">Y lo más incómodo del asunto: se está perdiendo sin conflicto, sin oposición y sin duelo, porque hace mucho que dejó de servirnos para algo.</p>
+</div>
+
+<footer>
+  <div class="eyebrow">Referencias en formato APA 7</div>
+  <div class="ref">
+    Guerrero, G. R., y Sjöström, J. (2025). Critical scientific and environmental literacies: A systematic and critical review. <i>Studies in Science Education, 61</i>(1), 41-87. https://doi.org/10.1080/03057267.2024.2344988<br><br>
+    Ministerio del Medio Ambiente. (2022). <i>Decreto Supremo N° 1/2022. Norma de emisión de luminosidad artificial generada por alumbrados de exteriores</i>. Gobierno de Chile.<br><br>
+    Moraga Toledo, S., y Palomera Rojas, P. (2022). Diseño de secuencias de enseñanza y aprendizaje en física: una mirada desde el uso del contexto. <i>Información Tecnológica, 33</i>(2), 287-296.<br><br>
+    Rodrigues, L., Montenegro, M., y Meneses, A. (2023). Mapping the astronomy content knowledge of Chilean in-service teachers. <i>International Journal of Science Education, 45</i>(6), 451-469. https://doi.org/10.1080/09500693.2022.2164704
+  </div>
+</footer>
+
+</div>
+</div>
+</body>
+</html>
